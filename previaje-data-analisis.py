@@ -327,4 +327,80 @@ print("""
 | Figure 1 - Created and shown on screen |
 ------------------------------------------
 """)
+print("Close the Figure 1 to continue")
 create_graph(trips_per_edition)
+
+# DEFENSE OF PRACTICAL WORK
+
+# Write a function that prompts the user to choose an edition of the Previaje program
+# and then shows a bar graph indicating the total number of trips per destination province for that edition.
+
+print("""
+      ########################################
+      ##               STAGE 4               #
+      ########################################
+      """)
+
+def graph_total_travelers_per_destination_province_for_edition(trip_list):
+    """
+    Function that takes an input of a Previaje edition and prints a
+    graph of travelers per province for that edition.
+
+    Parameters:
+    trip_list (list): List of dictionaries containing the trip data.
+
+    Returns:
+    None
+    """
+
+    # Control structure to handle user input for the Previaje edition
+    while True:
+        selected_edition = input("""Choose the Previaje edition you want to know
+    the total number of travelers per destination province and graph.
+    Options:
+    previaje 1
+    previaje 2
+    previaje 3
+    """).lower()
+
+        # Validate the user input to ensure a valid edition is chosen
+        if selected_edition in ["previaje 1", "previaje 2", "previaje 3"]:
+            break
+        else:
+            print("Invalid edition. Please choose from the available options.")
+
+    # Filter relevant headers: travelers, destination, and edition
+    relevant_data_list = relevant_data(trip_list, "destination_province", "travelers", "edition")
+
+    travelers_per_edition_destination = {}
+    # Calculate the total number of travelers per destination province for the chosen edition
+    for trip in relevant_data_list:
+        if trip['edition'] == selected_edition:
+            travelers = int(trip['travelers'])
+            destination_province = trip['destination_province']
+            if destination_province in travelers_per_edition_destination:
+                travelers_per_edition_destination[destination_province] += travelers
+            else:
+                travelers_per_edition_destination[destination_province] = travelers
+
+    # Extract data for the graph
+    province_list = list(travelers_per_edition_destination.keys())
+    travelers_list = list(travelers_per_edition_destination.values())
+
+    # Create and display the bar graph
+    print("""
+------------------------------------------
+| Figure 2 - Created and shown on screen |
+------------------------------------------
+""")
+    fig, ax = plt.subplots()
+    ax.bar(province_list, travelers_list, width=0.7, edgecolor="white", linewidth=0.7)
+    plt.xticks(rotation=90)
+    plt.title(f"Total Travelers per Destination Province - {selected_edition.capitalize()}")
+    plt.xlabel("Destination Province")
+    plt.ylabel("Total Travelers")
+    plt.tight_layout()
+    plt.show()
+
+
+graph_total_travelers_per_destination_province_for_edition(trip_list)
