@@ -1,4 +1,4 @@
-# **FINAL PRACTICAL WORK**
+# FINAL PRACTICAL WORK
 
 # Stage 1
 """
