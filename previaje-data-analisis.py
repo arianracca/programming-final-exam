@@ -15,7 +15,11 @@
 import os
 import csv
 
-print("STAGE 1:")
+print("""
+      ########################################
+      ##               STAGE 1               #
+      ########################################
+      """)
 
 def open_file(file):
     """
@@ -35,8 +39,8 @@ def open_file(file):
 province_data_list = open_file('coordenadas_provincias.csv')
 
 # Print the result of 'coordenadas_provincias' being parsed as a list
-print("Result of 'coordenadas_provincias' being parsed as a list:")
-print(province_data_list)
+# print("Result of 'coordenadas_provincias' being parsed as a list:")
+# print(province_data_list)
 
 
 def list_to_dict(data_list):
@@ -53,8 +57,8 @@ def list_to_dict(data_list):
 
     return province_dictionary
 
-print("Result of processing the list of 'coordenadas_provincias' as a list of dictionaries:")
-print(list_to_dict(province_data_list))
+# print("Result of processing the list of 'coordenadas_provincias' as a list of dictionaries:")
+# print(list_to_dict(province_data_list))
 
 ## Class Province
 
@@ -73,7 +77,11 @@ class Province:
         return f"The province is: {self.name}, coordinates: {self.coordinates}"
 
 # Examples:
-print("Result of creating all the provinces found on the dataset")
+print("""
+-------------------------------------------------------------
+Result of instantiate all the provinces found on the dataset
+-------------------------------------------------------------
+""")
 province_dictionary = list_to_dict(province_data_list)
 for name, coordinates in province_dictionary.items():
     province = Province(name, coordinates)  # creates the object as an instance of the class
@@ -99,11 +107,15 @@ https://datos.yvera.gob.ar/dataset/09679fe3-7379-481d-a36a-6b1e3d7374b1/archivo/
 
 import csv
 
-print("STAGE 2")
+print("""
+      ########################################
+      ##               STAGE 2               #
+      ########################################
+      """)
 trip_list = open_file('viajes_origen_destino_mes.csv')
 
 # Print the list
-print(trip_list)
+# print(trip_list)
 
 ## Class Trip
 """
@@ -135,9 +147,9 @@ class Trip:
 
 # Examples:
 # Create objects for each item in the trip_list
-for item in trip_list:
-    trip = Trip(item[0], item[1], item[2], int(item[3]), int(item[4]), item[5])  # creates the object as an instance of the class
-    print(trip)
+# for item in trip_list:
+#     trip = Trip(item[0], item[1], item[2], int(item[3]), int(item[4]), item[5])  # creates the object as an instance of the class
+#     print(trip)
 
 ## Functions
 
@@ -158,9 +170,9 @@ def trip_list_to_dict(trip_list):
         trip_dict_list.append(trip_dict)
     return trip_dict_list
 
-print("Result of iteration on trips dataset, parsing them to dictionary")
 trips = trip_list_to_dict(trip_list)
-print(trips)
+# print("Result of iteration on trips dataset, parsing them to dictionary")
+# print(trips)
 
 def relevant_data(trip_list, *headers):
     relevant_data_list = []
@@ -174,9 +186,9 @@ def relevant_data(trip_list, *headers):
     return relevant_data_list
 
 # Example of use, filter by "trips" and "edition" columns
-print("Filter of columns selected by parameter")
 trips_edition = relevant_data(trip_list, "trips", "edition")
-print(trips_edition)
+# print("Filter of columns selected by parameter")
+# print(trips_edition)
 
 # Calculate the province that received the most travelers in a given month and year.
 def most_travelers(trip_list, month, year):
@@ -197,13 +209,21 @@ def most_travelers(trip_list, month, year):
         return "No data available."
 
 # Example of use, print results for each month in 2022
-print("Result of selecting the province with the most travelers for each month in 2022")
+print("""
+--------------------------------------------------------------------------------
+Result of selecting the province with the most travelers for each month in 2022
+--------------------------------------------------------------------------------
+""")
 for month in range(1, 13):
     province = most_travelers(trip_list, month, 2022)
     print(f"Province with the most travelers in {month}/2022: {province}")
 
 # Example of use, case when there is no data for a specific month (10-2023)
-print("Result of selecting a month without data")
+print("""
+-----------------------------------------
+Result of selecting a month without data
+-----------------------------------------
+""")
 province = most_travelers(trip_list, 10, 2023)
 print(f"Province with the most travelers in 10/2023: {province}")
 
@@ -232,7 +252,79 @@ for element in trip_list:
         provinces.append(origin_province)
 
 # Examples iterating through each province
-print("Result of iteration for each province calculating the averages")
+print("""
+-----------------------------------------------------------------------------------
+Result of iteration for each province calculating the averages (travelers per trip)
+-----------------------------------------------------------------------------------
+""")
 for province in provinces:
     average = calculate_average(trip_list, province)
     print(f"Average travelers per trip in {province}: {average}")
+
+# **FINAL PRACTICAL WORK**
+
+# Stage 3: New Analysis and Graph
+"""
+In this final stage, you will:
+- Use the data from the 'previaje.csv' file to load a data structure that you consider appropriate for the data relevant to answer the following question: How many trips were made in each edition of the PreViaje program?
+- Create a pie chart that shows the percentages of trips corresponding to each edition, relative to the total number of trips in the entire program. To do this, you should use the matplotlib and seaborn modules. Use the published examples as a guide.
+"""
+
+print("""
+      ########################################
+      ##               STAGE 3               #
+      ########################################
+      """)
+
+# Filter relevant headers: trips and edition
+trips_edition = relevant_data(trip_list, "trips", "edition")
+
+def calculate_trips_per_edition(data_list):
+    """
+    Function that receives a list of dictionaries as a parameter
+    and returns the number of trips per edition in a dictionary
+    (key: edition, value: total trips)
+    """
+    trips_per_edition = {}
+
+    for trip in data_list:
+        edition = trip['edition']
+        trips = int(trip['trips'])
+        if edition in trips_per_edition:
+            trips_per_edition[edition] += trips
+        else:
+            trips_per_edition[edition] = trips
+    return trips_per_edition
+
+trips_per_edition = calculate_trips_per_edition(trips_edition)
+print("""
+--------------------------------------------------------------------------------------
+Result of creating a dictionary with the number of trips for each edition of PreViaje
+--------------------------------------------------------------------------------------
+""")
+print(trips_per_edition)
+
+## Graph
+
+import matplotlib.pyplot as plt
+
+def create_graph(dictionary):
+    editions_list = list(dictionary.keys())
+    trips_list = list(dictionary.values())
+
+    # Create the graph
+    plt.figure(figsize=(8, 8))
+    plt.pie(trips_list, labels=editions_list, autopct="%0.1f%%", startangle=35)
+
+    # Set title
+    plt.title("Number of Trips per Edition of PreViaje")
+
+    # Show the graph
+    plt.show()
+
+print("""
+------------------------------------------
+| Figure 1 - Created and shown on screen |
+------------------------------------------
+""")
+create_graph(trips_per_edition)
